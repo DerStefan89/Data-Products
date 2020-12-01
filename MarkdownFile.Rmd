@@ -1,0 +1,56 @@
+---
+title: "MyShinyApp"
+author: "Stefan"
+date: "1 12 2020"
+output: slidy_presentation
+---
+
+## Overview
+
+Using the mtcars dataset, a simple, interactive dashboard was created, which quickly shows the correlation between different, selected variables (x-variable) and the MPG data (y-variable)
+
+
+## The mtcars Data
+The following figure shows an overview of all variables of the mtcars data set. It should be possible for the dashboard user to quickly see the relationship between the individual variables and the MPG data
+```{r mtcars}
+head(mtcars)
+```
+
+## Shiny Code
+The following code shows both the UI and the server code
+```{r Code,message=FALSE, results='hide'}
+library(shiny)
+library(shinydashboard)
+
+# Define UI for application that draws a histogram
+ui <-  dashboardPage(
+    dashboardHeader(title = "Car Data"),
+    dashboardSidebar(),
+    dashboardBody(
+        box(plotOutput("correlation_plot"), width = 8),
+        box(
+            selectInput("feature", "Feature:",
+                        c("cyl", "disp", "hp", "drat","wt", "qsec", "vs", "am", "gear", "carb")), width = 4
+        )
+    )
+)
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+
+    output$correlation_plot <- renderPlot({
+        plot(mtcars$mpg, mtcars[[input$feature]],
+             xlab = "MPG", ylab = "Feature")
+
+    })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+```
+
+## Slide with Plot
+The present plot shows that there is a negative correlation between the displacement (disp) and miles per gallon (mpg)
+```{r pressure}
+plot(mtcars$mpg, mtcars$disp)
+```
